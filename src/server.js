@@ -8,9 +8,35 @@ app.listen(3000, () => {
 });
 
 app.get("/", (req, res) => {
-  res.send("Welcome to the Library API");
+  res.status(200).json({ message: "Welcome to the API!" });
 });
 
-app.get("api/books", (req,res) =>{
-    res.sendStatus(200).send("Welcome in entpoint books!")
+app.get("/libros", (req, res) => {
+  res.status(200).json(libros);
 });
+
+
+app.get("/libros/:id",(req,res)=>{
+  const id = Number(req.params.id)
+  const libro = libros.find((libro) => libro.id === id);
+
+  if(!libro){
+    return res.status(404).json({
+      message: " 404 Uups something it's wrong"
+    });
+  }
+  res.status(200).json(libro)
+});
+
+const libros = [
+  {
+    id: 1,
+    title: "Cien años de soledad",
+    status: "available"
+  },
+  {
+    id: 2,
+    title: "El principito",
+    status: "borrowed"
+  }
+];
