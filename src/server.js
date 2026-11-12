@@ -154,3 +154,54 @@ if(camposNoPermitidos){
 
 });
 
+app.put("/libros/:id", (req,res)=>{
+  const id=Number(req.params.id);
+  const libro=libros.find(libro=>libro.id===id);
+  if(!libro){
+    return res.status(404).json({
+      error:"The book not found"
+    });
+  }
+
+  if(Array.isArray(req.body)||!req.body||typeof req.body!=="object"){
+    return res.status(400).json({
+      error:"Bad request, in typeof request, or empty request"
+    })
+  }
+
+  const camposPermitidos = ["title", "status"];
+  const camposRecibidos = Object.keys(req.body);
+
+  const camposInvalidos =
+    camposRecibidos.length !== camposPermitidos.length ||
+    camposRecibidos.some((campo) => !camposPermitidos.includes(campo));
+
+  if (camposInvalidos) {
+    return res.status(400).json({ error: "Send exactly title and status" });
+  }
+
+
+
+  if(typeof req.body.title!=="string"||req.body.title.trim()===""){
+    return res.status(400).json({
+      error:"Bad request, the title must be string and cannot be empty"
+    });
+  } 
+  
+  const estadosPermitidos=[
+    "borrowed",
+    "available",
+    "maintenance"
+  ];
+
+  if(!estadosPermitidos.includes(req.body.status)){
+    return res.status(400).json({
+      error:"Incorrect request, wrong request type, empty request, or invalid fields"
+    });
+  }
+
+  libro.status=req.body.status;
+  libro.title=req.body.title.trim();
+  return res.status(200).json(libro)
+
+});
