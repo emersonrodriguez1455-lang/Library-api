@@ -205,3 +205,21 @@ app.put("/libros/:id", (req,res)=>{
   return res.status(200).json(libro)
 
 });
+
+
+app.delete("/libros/:id", (req,res)=>{
+    const id = Number(req.params.id);
+    const indice = libros.findIndex(libro=>libro.id===id);
+
+    if(indice===-1){
+      return res.status(404).json({
+        error:"The book not find"
+      });
+    }
+    const [eliminado]=libros.splice(indice,1)
+
+    return res.status(200).json({
+      message:"The book has been deleted",
+      libro: eliminado
+    });
+});
